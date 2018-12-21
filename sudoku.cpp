@@ -118,6 +118,103 @@ void getsudokuFinality(string path, int number) {
 	}
 	fclose(file);
 }
+void findvalid(char sudoku[][9], int row, int col, bool valid[10]) {
+	for (int i = 1; i < 10; i++)
+	{
+		valid[i] = true;
+	}
+	for (int i = 0; i < 9; i++)
+	{
+		valid[sudoku[row][i] - '0'] = false;
+		valid[sudoku[i][col] - '0'] = false;
+	}
+	int d[] = {0,1,2,-1,0,1,-2,-1,0};
+	int rowflag = row % 3;
+	int colflag = col % 3;
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			valid[sudoku[row + d[rowflag * 3 + i]][col + d[colflag * 3 + i]]] = false;
+		}
+	}
+}
+bool checksudoku(char sudoku[][9]) {
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+
+		}
+	}
+	return true;
+}
+bool dosolve(char sudoku[][9]) {
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			if (sudoku[i][j] == '0')
+			{
+				bool valid[10];
+				findvalid(sudoku,i,j,valid);
+				for (int k = 1; k < 10; k++)
+				{
+					if (valid[k])
+					{
+						sudoku[i][j] = k+'0';
+						if (dosolve(sudoku)) {
+							return true;
+						}
+					}
+				}
+				sudoku[i][j] = '0';
+				return false;
+			}
+		}
+	}
+	return true;
+}
+void solvesudoku(string path,string outpath) {
+	char ioarray[20][20];
+	char sudoku[9][9];
+	FILE * file = fopen(path.c_str(), "r");
+	FILE * fileout = fopen(outpath.c_str(), "w");
+	for (int i = 0; i < 9; i++)
+	{
+		
+	}
+	while (fgets(ioarray[0], 20, file)!=NULL) {
+		for (int i = 0; i < 9; i++)
+		{
+			sudoku[0][i] = ioarray[0][i * 2];
+		}
+		ioarray[0][17] = '\n';
+		ioarray[0][18] = '\0';
+		for (int i = 1; i < 9; i++)
+		{
+			fgets(ioarray[i], 20, file);
+			for (int j = 0; j < 9; j++)
+			{
+				sudoku[i][j] = ioarray[i][j * 2];
+			}
+			ioarray[i][17] = '\n';
+			ioarray[i][18] = '\0';
+		}
+		dosolve(sudoku);
+
+		for (int r = 0; r < 9; r++)
+		{
+			for (int c = 0; c < 9; c++)
+			{
+				ioarray[r][c * 2] = sudoku[r][c];
+			}
+			fputs(ioarray[r], fileout);
+		}
+	}
+	fclose(file);
+	fclose(fileout);
+}
 void test() {
 
 	char sudoku[9][9];
@@ -153,7 +250,11 @@ int main(int argc, char **argv)
 	if (!strcmp(argv[1], "-c")) {
 		int num;
 		sscanf(argv[2], "%d", &num);
-		getsudokuFinality("sudoku.txt", num);
+		getsudokuFinality("problem.txt", num);
+	}
+	if (!strcmp(argv[1], "-s")) {
+		string path = argv[2];
+		solvesudoku(path, "ans.txt");
 	}
 	return 0;
 }
