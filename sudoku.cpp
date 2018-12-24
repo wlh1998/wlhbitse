@@ -5,8 +5,33 @@ using namespace std;
 
 //学号1120161759，（5+9）%9 + 1 = 6
 //生成n个数独，保存至path中。
-
-
+int shifttable[36][9];
+void createshifttable() {
+	int shift[9] = { 0,3,6,1,4,7,2,5,8 };
+	int n = 0;
+	for (int i = 0; i < 6; i++)
+	{
+		if (i)
+		{
+			next_permutation(shift + 3, shift + 6);
+			shift[6] = 2;
+			shift[7] = 5;
+			shift[8] = 8;
+		}
+		for (int j = 0; j < 6; j++)
+		{
+			if (j)
+			{
+				next_permutation(shift + 6, shift + 9);
+			}
+			for (int k = 0; k < 9; k++)
+			{
+				shifttable[n][k] = shift[k];
+			}
+			n++;
+		}
+	}
+}
 void showsudoku(char sudoku[9][9]) {
 
 	for (int i = 0; i < 9; i++)
@@ -64,6 +89,49 @@ void savesudoku(string path,char sudoku[9][9],int access = ios::app) {
 		}
 	}
 	outfile.close();
+}
+
+void getsudokuFinality2(string path, int number) {
+	int n = number;
+	char sudoku[36][9][19];
+	createshifttable();
+	FILE * file = fopen(path.c_str(), "w");
+	for (int k = 0; k < 36; k++)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			for (int j = 0; j < 8; j++)
+			{
+				sudoku[k][i][j * 2 + 1] = ' ';
+			}
+			sudoku[k][i][17] = '\n';
+			sudoku[k][i][18] = '\0';
+		}
+	}
+
+			char line[10] = "612345789";
+			for (int k = 0; k < 40320 && n; k++)
+			{
+				if (k)
+				{
+					next_permutation(line + 1, line + 9);
+				}
+				int (*shift) = shifttable[0];
+				for (int i = 0; i < 36 && n; i++)
+				{
+					shift = shift + 9;
+					for (int r = 0; r < 9; r++)
+					{
+						for (int c = 0; c < 9; c++)
+						{
+							sudoku[i][r][((c + shift[r]) % 9) * 2] = line[c];
+						}	
+					}
+					n--;
+				}
+				fwrite(sudoku,sizeof(sudoku),1, file);
+			}
+	fclose(file);
 }
 void getsudokuFinality(string path, int number) {
 	int n = number;
@@ -250,7 +318,7 @@ int main(int argc, char **argv)
 	if (!strcmp(argv[1], "-c")) {
 		int num;
 		sscanf(argv[2], "%d", &num);
-		getsudokuFinality("problem.txt", num);
+		getsudokuFinality2("problem.txt", num);
 	}
 	if (!strcmp(argv[1], "-s")) {
 		string path = argv[2];
