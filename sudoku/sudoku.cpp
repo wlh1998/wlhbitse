@@ -342,16 +342,24 @@ void test2() {
 
 //	showsudoku(sudoku);
 }
-int main(int argc, char **argv)
-{
+int commandprocess(int argc,char ** argv) {
+
 	if (!strcmp(argv[1], "-c")) {
 		int num;
 		sscanf(argv[2], "%d", &num);
-		getsudokuFinality2("problem.txt", num);
+		if (num < 0 || num > 1000000) {
+			return 1;
+		}
+		getsudokuFinality2("sudoku.txt", num);
 	}
 	if (!strcmp(argv[1], "-s")) {
 		string path = argv[2];
-		solvesudoku(path, "ans.txt");
+		solvesudoku(path, "sudoku.txt");
 	}
+	return 0;
+}
+int main(int argc, char **argv)
+{
+	commandprocess(argc, argv);
 	return 0;
 }
