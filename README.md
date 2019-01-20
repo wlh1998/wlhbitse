@@ -1,5 +1,9 @@
 # wlhbitse  
 bit cs se homework  
+博客地址：  
+命令行：https://blog.csdn.net/wlh1998  
+gui部分：https://blog.csdn.net/qq_42174315/article/details/86537752  
+  
 运行说明：  
 在命令行中使用-s参数加题目文件名的形式求解数独，并将结果输出至文件sudoku.txt中。  
 如：sudoku.exe -s absolute_path_of_puzzlefile  
